@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<style>
+    #chat{
+        max-height: 500px;
+        min-height: 500px;
+        background-color: lightgrey;
+        overflow-y: scroll;
+    }
+</style>
+<body>
+    <h1>Chat</h1>
+    <div id="chat">
+
+    </div>
+    <input type="text" name="" id="msg" class="form-control" placeholder="Digite a mensagem">
+    <input type="text" id="username" placeholder="Seu nome de usuário" class="form-control">
+    <button onclick="enviar()" class="btn btn-primary btn-lg btn-block">Enviar</button>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script>
+    var socket = io("http://localhost:3000/");
+
+    socket.on("disconnect", () => {
+        console.log("desconectado");
+    });
+
+    socket.on("showmsg", (data) => {
+        var chat = document.getElementById("chat");
+        var p = document.createElement("p");
+        p.innerHTML = data.username + ": " + data.msg;
+        chat.append(p);
+    });
+
+    function enviar(){
+        var msgField = document.getElementById("msg");
+        var usernameField = document.getElementById("username");
+
+        var msg = msgField.value;
+        var username = usernameField.value;
+
+        socket.emit("msg",{msg: msg, username: username});
+
+    }
+
+</script>
+</html>
